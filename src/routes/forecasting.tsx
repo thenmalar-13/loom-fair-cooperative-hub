@@ -62,7 +62,7 @@ function Forecasting() {
 
       <div className="mt-4 grid gap-4 md:grid-cols-4">
         <Stat label={`Forecast total (${s.horizon} mo)`} value={`${f.total.toLocaleString("en-IN")} m`} />
-        <Stat label="Next month" value={`${f.points[0].value.toLocaleString("en-IN")} m`} hint={`Range ${f.points[0].low.toLocaleString("en-IN")}–${f.points[0].high.toLocaleString("en-IN")} m`} />
+        <Stat label="Next month" value={`${f.points[0]!.value.toLocaleString("en-IN")} m`} hint={`Range ${f.points[0]!.low.toLocaleString("en-IN")}–${f.points[0]!.high.toLocaleString("en-IN")} m`} />
         <Stat label="Confidence" value={f.confidence} hint={`Residual σ ≈ ${Math.round(f.sigma)} m`} />
         <Stat label="Trend" value={`${f.slope >= 0 ? "+" : ""}${Math.round(f.slope)} m/mo`} hint={`Level ${Math.round(f.level)} m`} />
       </div>

@@ -159,9 +159,9 @@ export function planAllocations(weavers: Weaver[], orders: Order[]): AllocationR
     const allocations: Allocation[] = [];
     for (const w of eligible) {
       if (need <= 0) break;
-      const q = Math.min(need, remaining[w.id]);
+      const q = Math.min(need, (remaining[w.id] ?? 0));
       if (q <= 0) continue;
-      remaining[w.id] -= q;
+      remaining[w.id] = (remaining[w.id] ?? 0) - q;
       need -= q;
       allocations.push({ weaverId: w.id, quantity: q, cost: w.cost, minPrice: w.minPrice });
     }
@@ -183,7 +183,7 @@ export function planAllocations(weavers: Weaver[], orders: Order[]): AllocationR
     };
   }
   const used: Record<string, number> = {};
-  weavers.forEach((w) => (used[w.id] = Math.max(0, Math.floor(w.capacity)) - remaining[w.id]));
+  weavers.forEach((w) => (used[w.id] = Math.max(0, Math.floor(w.capacity)) - (remaining[w.id] ?? 0)));
   return { plans, remaining, used };
 }
 
