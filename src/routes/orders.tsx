@@ -48,6 +48,7 @@ function Orders() {
       <div className="space-y-6">
         {state.orders.map((o) => {
           const p = alloc.plans[o.id];
+          if (!p) return null;
           return (
             <Panel key={o.id} title={`${o.id} · ${o.buyer}`} action={
               <Button variant="ghost" size="sm" onClick={() => { dispatch({ type: "removeOrder", id: o.id }); toast(`${o.id} removed`); }}><Trash2 className="h-4 w-4" /></Button>

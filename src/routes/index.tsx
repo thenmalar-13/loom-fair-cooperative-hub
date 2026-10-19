@@ -69,7 +69,7 @@ function Overview() {
         <div className="mt-4 flex flex-wrap gap-2">
           <Button onClick={() => {
             dispatch({ type: "confirmPlan", value: true });
-            const lines = state.orders.map((o) => { const p = alloc.plans[o.id]; return `${o.id}: ${p.allocated}/${o.quantity} m from ${p.allocations.length} weavers`; });
+            const lines = state.orders.map((o) => { const p = alloc.plans[o.id]; if (!p) return o.id; return `${o.id}: ${p.allocated}/${o.quantity} m from ${p.allocations.length} weavers`; });
             dispatch({ type: "log", agent: "Aggregation", message: `Allocation plan confirmed. ${lines.join("; ")}.` });
             toast.success("Allocation plan confirmed");
           }}>Run aggregation &amp; confirm plan</Button>
