@@ -148,7 +148,7 @@ export function planAllocations(weavers: Weaver[], orders: Order[]): AllocationR
         excluded.push({ weaverId: w.id, reason: `Needs ${w.leadTimeDays} days, deadline is ${o.deadlineDays}` });
         return false;
       }
-      if (remaining[w.id] <= 0) {
+      if ((remaining[w.id] ?? 0) <= 0) {
         excluded.push({ weaverId: w.id, reason: "No remaining capacity" });
         return false;
       }

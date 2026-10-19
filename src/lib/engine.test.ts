@@ -11,7 +11,7 @@ describe("aggregation", () => {
   it("never mixes textile categories or late weavers", () => {
     const r = planAllocations(SEED_WEAVERS, SEED_ORDERS);
     for (const o of SEED_ORDERS)
-      for (const a of r.plans[o.id].allocations) {
+      for (const a of r.plans[o.id]!.allocations) {
         const w = SEED_WEAVERS.find((x) => x.id === a.weaverId)!;
         expect(w.textile).toBe(o.textile);
         expect(w.leadTimeDays).toBeLessThanOrEqual(o.deadlineDays);
@@ -19,13 +19,13 @@ describe("aggregation", () => {
   });
   it("updates when capacity changes", () => {
     const ws = SEED_WEAVERS.map((w) => (w.textile === "silk" ? { ...w, capacity: 0 } : w));
-    expect(planAllocations(ws, SEED_ORDERS).plans["ORD-102"].allocated).toBe(0);
+    expect(planAllocations(ws, SEED_ORDERS).plans["ORD-102"]!.allocated).toBe(0);
   });
 });
 
 describe("negotiation", () => {
-  const order = SEED_ORDERS[1];
-  const plan = planAllocations(SEED_WEAVERS, SEED_ORDERS).plans[order.id];
+  const order = SEED_ORDERS[1]!;
+  const plan = planAllocations(SEED_WEAVERS, SEED_ORDERS).plans[order.id]!;
   it("blocks acceptance below the floor", () => {
     const n = { ...newNegotiation(order), buyerOffer: computeFloor(plan, DEFAULT_NEG_CONFIG) - 1 };
     expect(acceptOffer(n, plan, order).ok).toBe(false);
