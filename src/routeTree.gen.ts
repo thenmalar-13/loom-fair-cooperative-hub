@@ -10,33 +10,92 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CapacityRouteImport } from './routes/capacity'
+import { Route as ForecastingRouteImport } from './routes/forecasting'
+import { Route as NegotiationRouteImport } from './routes/negotiation'
+import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as ReportsRouteImport } from './routes/reports'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CapacityRoute = CapacityRouteImport.update({
+  id: '/capacity',
+  path: '/capacity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForecastingRoute = ForecastingRouteImport.update({
+  id: '/forecasting',
+  path: '/forecasting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NegotiationRoute = NegotiationRouteImport.update({
+  id: '/negotiation',
+  path: '/negotiation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/capacity': typeof CapacityRoute
+  '/forecasting': typeof ForecastingRoute
+  '/negotiation': typeof NegotiationRoute
+  '/orders': typeof OrdersRoute
+  '/reports': typeof ReportsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/capacity': typeof CapacityRoute
+  '/forecasting': typeof ForecastingRoute
+  '/negotiation': typeof NegotiationRoute
+  '/orders': typeof OrdersRoute
+  '/reports': typeof ReportsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/capacity': typeof CapacityRoute
+  '/forecasting': typeof ForecastingRoute
+  '/negotiation': typeof NegotiationRoute
+  '/orders': typeof OrdersRoute
+  '/reports': typeof ReportsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/capacity' | '/forecasting' | '/negotiation' | '/orders' | '/reports'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    '/' | '/capacity' | '/forecasting' | '/negotiation' | '/orders' | '/reports'
+  id:
+    | '__root__'
+    | '/'
+    | '/capacity'
+    | '/forecasting'
+    | '/negotiation'
+    | '/orders'
+    | '/reports'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CapacityRoute: typeof CapacityRoute
+  ForecastingRoute: typeof ForecastingRoute
+  NegotiationRoute: typeof NegotiationRoute
+  OrdersRoute: typeof OrdersRoute
+  ReportsRoute: typeof ReportsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +107,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/capacity': {
+      id: '/capacity'
+      path: '/capacity'
+      fullPath: '/capacity'
+      preLoaderRoute: typeof CapacityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forecasting': {
+      id: '/forecasting'
+      path: '/forecasting'
+      fullPath: '/forecasting'
+      preLoaderRoute: typeof ForecastingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/negotiation': {
+      id: '/negotiation'
+      path: '/negotiation'
+      fullPath: '/negotiation'
+      preLoaderRoute: typeof NegotiationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CapacityRoute: CapacityRoute,
+  ForecastingRoute: ForecastingRoute,
+  NegotiationRoute: NegotiationRoute,
+  OrdersRoute: OrdersRoute,
+  ReportsRoute: ReportsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
