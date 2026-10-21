@@ -42,6 +42,28 @@ describe("negotiation", () => {
   });
 });
 
+describe("seed scenario", () => {
+  const alloc = planAllocations(SEED_WEAVERS, SEED_ORDERS);
+  it("ORD-102 is fully allocated from compatible silk capacity (600 of 600 m)", () => {
+    const p = alloc.plans["ORD-102"]!;
+    expect(p.requested).toBe(600);
+    expect(p.allocated).toBe(600);
+    expect(p.fulfilmentPct).toBe(100);
+    expect(p.feasible).toBe(true);
+  });
+  it("ORD-101 stays a genuine capacity shortfall below its 90% requirement", () => {
+    const p = alloc.plans["ORD-101"]!;
+    expect(p.allocated).toBeLessThan(0.9 * p.requested);
+    expect(p.feasible).toBe(false);
+  });
+  it("transcript distinguishes order quantity from allocated quantity", () => {
+    const o = SEED_ORDERS.find((x) => x.id === "ORD-101")!;
+    const n = newNegotiation(o, DEFAULT_NEG_CONFIG, planAllocations(SEED_WEAVERS, SEED_ORDERS).plans["ORD-101"]!.allocated);
+    expect(n.rounds[0]!.message).toContain("2000 m");
+    expect(n.rounds[0]!.message).toContain("1130 m");
+  });
+});
+
 describe("forecast and report", () => {
   it("recalculates with assumptions", () => {
     const base = { horizon: 3, window: 4, trendWeight: 0, adjustmentPct: 0 };
