@@ -225,13 +225,18 @@ export const DEFAULT_NEG_CONFIG: NegConfig = {
   escalationGapPct: 10,
 };
 
-export function newNegotiation(order: Order, config: NegConfig = DEFAULT_NEG_CONFIG): Negotiation {
+export function newNegotiation(order: Order, config: NegConfig = DEFAULT_NEG_CONFIG, allocatedQty?: number): Negotiation {
+  // The transcript must distinguish metres ordered from metres allocated — the price is agreed on the allocated quantity.
+  const opening =
+    allocatedQty == null
+      ? `Opening offer of ₹${order.targetPrice}/m for an order of ${order.quantity} m.`
+      : `Opening offer of ₹${order.targetPrice}/m. Order quantity: ${order.quantity} m; allocated for this deal: ${allocatedQty} m.`;
   return {
     orderId: order.id,
     config: { ...config },
     buyerOffer: order.targetPrice,
     counter: null,
-    rounds: [{ n: 0, actor: "buyer", price: order.targetPrice, message: `Opening offer of ₹${order.targetPrice}/m for ${order.quantity} m.` }],
+    rounds: [{ n: 0, actor: "buyer", price: order.targetPrice, message: opening }],
     status: "open",
     finalPrice: null,
     escalationReason: null,
@@ -312,7 +317,7 @@ export function acceptOffer(n: Negotiation, plan: OrderPlan, order: Order): Acti
       ...n,
       status: "accepted",
       finalPrice: n.buyerOffer,
-      rounds: [...n.rounds, { n: n.rounds.length, actor: "cooperative", message: `Accepted ₹${n.buyerOffer}/m (floor ₹${floor}).` }],
+      rounds: [...n.rounds, { n: n.rounds.length, actor: "cooperative", message: `Accepted ₹${n.buyerOffer}/m (floor ₹${floor}) for the ${plan.allocated} m allocated (order quantity ${order.quantity} m).` }],
     },
   };
 }

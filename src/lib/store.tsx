@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
 import {
+  DEFAULT_NEG_CONFIG,
   buildReport,
   forecast,
   newNegotiation,
@@ -52,15 +53,16 @@ type Action =
   | { type: "escalation"; orderId: string; reason: string; price: number }
   | { type: "confirmPlan"; value: boolean };
 
-const KEY = "sahakarai-demo-v1";
+const KEY = "sahakarai-demo-v2"; // bumped: discard stale v1 demo state saved before the seed corrections
 
 export function seedState(): AppState {
+  const seedPlans = planAllocations(SEED_WEAVERS, SEED_ORDERS).plans;
   return {
     weavers: SEED_WEAVERS.map((w) => ({ ...w })),
     orders: SEED_ORDERS.map((o) => ({ ...o })),
     history: { cotton: [...SEED_HISTORY.cotton], silk: [...SEED_HISTORY.silk], towel: [...SEED_HISTORY.towel] },
     forecastSettings: { ...SEED_FORECAST_SETTINGS },
-    negotiations: Object.fromEntries(SEED_ORDERS.map((o) => [o.id, newNegotiation(o)])),
+    negotiations: Object.fromEntries(SEED_ORDERS.map((o) => [o.id, newNegotiation(o, DEFAULT_NEG_CONFIG, seedPlans[o.id]?.allocated)])),
     activity: [{ id: 1, agent: "System", message: "Demo scenario loaded with fictional cooperative data.", at: new Date().toISOString() }],
     escalations: [],
     planConfirmed: false,
@@ -79,8 +81,10 @@ function reducer(s: AppState, a: Action): AppState {
       return { ...s, planConfirmed: false, weavers: s.weavers.map((w) => (w.id === a.id ? { ...w, ...a.patch } : w)) };
     case "updateOrder":
       return { ...s, planConfirmed: false, orders: s.orders.map((o) => (o.id === a.id ? { ...o, ...a.patch } : o)) };
-    case "addOrder":
-      return { ...s, planConfirmed: false, orders: [...s.orders, a.order], negotiations: { ...s.negotiations, [a.order.id]: newNegotiation(a.order) } };
+    case "addOrder": {
+      const plans = planAllocations(s.weavers, [...s.orders, a.order]).plans;
+      return { ...s, planConfirmed: false, orders: [...s.orders, a.order], negotiations: { ...s.negotiations, [a.order.id]: newNegotiation(a.order, DEFAULT_NEG_CONFIG, plans[a.order.id]?.allocated) } };
+    }
     case "removeOrder": {
       const negotiations = { ...s.negotiations };
       delete negotiations[a.id];

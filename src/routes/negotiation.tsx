@@ -76,7 +76,7 @@ function NegotiationLab() {
       </PageHeader>
 
       <div className="grid gap-4 md:grid-cols-5">
-        <Stat label="Order" value={`${plan.allocated} m`} hint={`${TEXTILE_LABEL[order.textile]} · ${plan.fulfilmentPct.toFixed(0)}% fulfilled`} />
+        <Stat label="Order / allocated" value={`${plan.allocated} / ${order.quantity} m`} hint={`${TEXTILE_LABEL[order.textile]} · ${plan.fulfilmentPct.toFixed(0)}% of the order fulfilled`} />
         <Stat label="Floor price" value={`${inr(floor)}/m`} hint="Minimum acceptable" />
         <Stat label="Target price" value={`${inr(target)}/m`} hint={`Cost + ${neg.config.targetMarginPct}%`} />
         <Stat label="Current buyer offer" value={`${inr(neg.buyerOffer)}/m`} hint={neg.buyerOffer >= floor ? "At or above floor" : "Below floor"} />
@@ -112,7 +112,7 @@ function NegotiationLab() {
               <Button disabled={!open} onClick={() => apply(acceptOffer(neg, plan, order), `accepted ₹${neg.buyerOffer}/m`)}>Accept current offer</Button>
               <Button variant="outline" disabled={!open} onClick={() => apply(rejectOffer(neg), "rejected by cooperative")}>Reject</Button>
               <Button variant="outline" disabled={!open} onClick={() => doEscalate("Manually escalated for officer review.")}>Escalate to officer</Button>
-              <Button variant="ghost" onClick={() => { dispatch({ type: "setNegotiation", neg: { ...newNegotiation(order, neg.config) } }); dispatch({ type: "log", agent: "Negotiation", message: `${order.id}: negotiation restarted.` }); }}>Restart negotiation</Button>
+              <Button variant="ghost" onClick={() => { dispatch({ type: "setNegotiation", neg: { ...newNegotiation(order, neg.config, plan.allocated) } }); dispatch({ type: "log", agent: "Negotiation", message: `${order.id}: negotiation restarted.` }); }}>Restart negotiation</Button>
             </div>
             {error && <p role="alert" className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
           </Panel>
